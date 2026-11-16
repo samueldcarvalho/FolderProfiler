@@ -1,32 +1,36 @@
 # FolderProfiler
 
-CLI simples para trocar pastas de perfil via `.zip`, com backup timestampado.
+A simple CLI tool to switch between folder profiles using `.zip` files, with timestamped backups.
 
-## Requisitos
+## Requirements
 
 - .NET 10 SDK
 - Windows
 
-## Configuração
+## Configuration
 
-Na primeira execução o app cria:
+On the first run, the app creates:
 
 `C:\FolderProfiler\settings.json`
 
-Edite o arquivo e rode de novo. Exemplo:
+Edit the file and run the app again. Example:
 
 ```json
 {
-  "projectName": "MeuJogo",
-  "profiledFolderPath": "D:\Jogos\MeuJogo\profile",
-  "profiles": [ "eu", "mulher", "amigo" ],
-  "actualProfile": "eu"
+  "projectName": "MyGame",
+  "profiledFolderPath": "D:\\Games\\MyGame\\profile",
+  "profiles": [
+    "me",
+    "wife",
+    "friend"
+  ],
+  "actualProfile": "me"
 }
 ```
 
-Paths Windows com `\` simples (tipo `C:\Users\...`) são aceitos — o app normaliza antes de ler. `\\` ou `/` também funcionam.
+Windows paths using single backslashes (e.g., `C:\Users\...`) are supported — the app normalizes them before reading. Double backslashes (`\\`) and forward slashes (`/`) also work.
 
-## Layout dos arquivos
+## File Structure
 
 ```text
 C:\FolderProfiler/
@@ -39,32 +43,32 @@ C:\FolderProfiler/
           20261113_133045.zip
 ```
 
-- Perfil **ativo**: pasta em `profiledFolderPath`
-- Perfis **inativos**: zip em `Files/<profile>/`
-- Ao ativar um perfil: o zip usado na extração vai para `backup/yyyyMMdd_HHmmss.zip`
+- **Active profile**: folder located at `profiledFolderPath`.
+- **Inactive profiles**: stored as `.zip` files in `Files/<profile>/`.
+- When activating a profile, the zip file used for extraction is moved to `backup/yyyyMMdd_HHmmss.zip`.
 
 ## Bootstrap
 
-1. Preencha o `settings.json` com a pasta atual e `actualProfile` correspondente.
-2. Rode o app — ele cria a árvore `Files\<perfil>\backup\` automaticamente.
-3. Coloque o zip base de cada perfil (exceto o atual) em:
+1. Fill in `settings.json` with the current folder path and its corresponding `actualProfile`.
+2. Run the app — it automatically creates the `Files\<profile>\backup\` directory structure.
+3. Place the base `.zip` file for each profile (except the currently active one) in:
 
-`C:\FolderProfiler\<projectName>\Files\<perfil>\<folderName>_<perfil>.zip`
+   `C:\FolderProfiler\<projectName>\Files\<profile>\<folderName>_<profile>.zip`
 
-O zip deve ter a pasta perfilada na raíz (ex.: `.agents\...`), não os arquivos soltos nem `.agents\.agents\...`.
+The zip file must contain the profiled folder at its root (e.g., `.agents\...`), not loose files or an extra nested `.agents\.agents\...` directory.
 
-## Rodar
+## Run
 
 ```bash
 dotnet run
 ```
 
-## Publicar .exe
+## Publish as an Executable
 
-O repo inclui `nuget.config` apontando só para nuget.org (evita feeds corporativos). Publish não gera `.pdb`.
+The repository includes a `nuget.config` pointing exclusively to nuget.org to avoid corporate package feeds. Publishing does not generate `.pdb` files.
 
 ```bash
 dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o .\publish
 ```
 
-Saída: `publish\FolderProfiler.exe`
+Output: `publish\FolderProfiler.exe`
